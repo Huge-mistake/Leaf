@@ -36,24 +36,8 @@ jobs:
       - name: Create LeafclipJar
         run: ./gradlew createLeafclipJar --stacktrace --no-daemon
 
-      - name: Prepare release notes and artifacts
-        run: |
-          chmod +x ./scripts/prepareRelease.sh
-          ./scripts/prepareRelease.sh
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_REPO: ${{ github.repository }}
-          MC_VERSION: ${{ env.MC_VERSION }}
-          BUILD_NUMBER: ${{ env.BUILD_NUMBER }}
-
-      - name: Release Leaf
-        uses: softprops/action-gh-release@v3
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: "Leaf ${{ env.MC_VERSION }}"
-          tag_name: "ver-${{ env.MC_VERSION }}"
-          files: "./leaf-${{ env.MC_VERSION }}-${{ env.BUILD_NUMBER }}.jar"
-          body_path: "./release_notes.md"
-          token: "${{ secrets.GITHUB_TOKEN }}"
-          target_commitish: "${{ github.sha }}"
-          draft: false
-          prerelease: false
+          name: leaf-${{ env.MC_VERSION }}-${{ env.BUILD_NUMBER }}
+          path: ./leaf-*.jar
