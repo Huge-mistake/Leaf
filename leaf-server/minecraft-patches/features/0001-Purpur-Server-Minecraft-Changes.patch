@@ -15765,10 +15765,10 @@ index 06c63a3429d010546c8b9de610cbae7bf6bb6935..3da6333683790ce17d9de34955dbf3f9
                          double nearestPlayerDistanceSqr = nearestPlayer.distanceToSqr(xx, yStart, zz);
                          if (level.isLoadedAndInBounds(pos) && isRightDistanceToPlayerAndSpawnPoint(level, chunk, pos, nearestPlayerDistanceSqr)) { // Paper - don't load chunks for mob spawn
 diff --git a/net/minecraft/world/level/ServerExplosion.java b/net/minecraft/world/level/ServerExplosion.java
-index a2893f4298af62177fc3621603d465e24fe1e2eb..aa000036aa3390ba0d87056ffff8144887e599de 100644
+index 83fb61042947f2468a03bfa4f84049d08c809f99..a53a96baebaad23ebad2524337ed17f1408eb861 100644
 --- a/net/minecraft/world/level/ServerExplosion.java
 +++ b/net/minecraft/world/level/ServerExplosion.java
-@@ -631,6 +631,23 @@ public class ServerExplosion implements Explosion {
+@@ -629,6 +629,23 @@ public class ServerExplosion implements Explosion {
          this.directMappedBlockCache = new ca.spottedleaf.moonrise.patches.collisions.ExplosionBlockCache[BLOCK_EXPLOSION_CACHE_WIDTH * BLOCK_EXPLOSION_CACHE_WIDTH * BLOCK_EXPLOSION_CACHE_WIDTH];
          this.mutablePos = new BlockPos.MutableBlockPos();
          // Paper end - collision optimisations
@@ -17537,7 +17537,7 @@ index 22b9f70f76ff8f592359e958fa439e9806a29fcc..faadee8259e87e6828b92ec0bbdf69cf
 +    // Purpur end - Enchantment Table Persists Lapis
  }
 diff --git a/net/minecraft/world/level/block/entity/SignBlockEntity.java b/net/minecraft/world/level/block/entity/SignBlockEntity.java
-index 4ce511e141cec76435b0b0f38f0c341df456a3cd..a990072c34f651be58b9e3a90a088d163b3c5db0 100644
+index 19cc33503f303c6965c02f37b81531955350706f..9f71dbc6a10d19394bb5eaa9bdd3666261ab72ae 100644
 --- a/net/minecraft/world/level/block/entity/SignBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/SignBlockEntity.java
 @@ -153,6 +153,21 @@ public class SignBlockEntity extends BlockEntity {
