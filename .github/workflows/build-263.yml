@@ -36,8 +36,14 @@ jobs:
       - name: Create LeafclipJar
         run: ./gradlew createLeafclipJar --stacktrace --no-daemon
 
+      - name: Locate jars
+        run: find . -name "*.jar" -not -path "./.gradle/*" -not -path "./.git/*"
+
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: leaf-${{ env.MC_VERSION }}-${{ env.BUILD_NUMBER }}
-          path: ./leaf-*.jar
+          path: |
+            **/build/libs/*.jar
+            *.jar
+          if-no-files-found: error
