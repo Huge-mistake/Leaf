@@ -46,10 +46,10 @@ index c5e1c677b400edee537a4761e57746baabe803e7..9e9235fdc176c6535cb6c8f2608b129f
              RandomSource random = level.getRandom();
  
 diff --git a/net/minecraft/world/entity/LivingEntity.java b/net/minecraft/world/entity/LivingEntity.java
-index 4fecb88fdb68066cff188462ac7c63dde507e9bd..b2c6b97dbf9d8e80daf59081c7809f08a726529a 100644
+index 91fe6ba11899091ef815259e1326c914dd897d59..084699021c1ba6a64fb227d2c4fe7400c0f08639 100644
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -999,7 +999,7 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
+@@ -1003,7 +1003,7 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
              }
  
              List<ParticleOptions> particles = this.entityData.get(DATA_EFFECT_PARTICLES);
@@ -58,7 +58,7 @@ index 4fecb88fdb68066cff188462ac7c63dde507e9bd..b2c6b97dbf9d8e80daf59081c7809f08
                  boolean isAmbient = this.entityData.get(DATA_EFFECT_AMBIENCE_ID);
                  int bound = this.isInvisible() ? 15 : 4;
                  int ambientFactor = isAmbient ? 5 : 1;
-@@ -2838,7 +2838,7 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
+@@ -2842,7 +2842,7 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
                  this.swapHandItems();
                  break;
              case 60:

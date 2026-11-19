@@ -5,10 +5,10 @@ Subject: [PATCH] optimize tickEffects
 
 
 diff --git a/net/minecraft/world/entity/LivingEntity.java b/net/minecraft/world/entity/LivingEntity.java
-index 04489fa106bd3bc768110962053a160a040a313c..717b619ee8aabc9278c3374910f86647f3d1b0ef 100644
+index 267a3e62ab2592837d4a5c915843bae5e99b176d..6b87c78c227bdf9f0a5dbe8592d32edbfd994876 100644
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -962,6 +962,7 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
+@@ -966,6 +966,7 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
  
      protected void tickEffects() {
          if (this.level() instanceof ServerLevel serverLevel) {
@@ -16,7 +16,7 @@ index 04489fa106bd3bc768110962053a160a040a313c..717b619ee8aabc9278c3374910f86647
              Iterator<Holder<MobEffect>> iterator = this.activeEffects.keySet().iterator();
  
              this.tickingEffects = true; // CraftBukkit
-@@ -986,6 +987,7 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
+@@ -990,6 +991,7 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
              }
              // CraftBukkit start
              this.tickingEffects = false;

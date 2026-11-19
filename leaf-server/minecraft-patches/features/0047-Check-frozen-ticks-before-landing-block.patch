@@ -21,10 +21,10 @@ track:
 // SYNC SOURCE END
 
 diff --git a/net/minecraft/world/entity/LivingEntity.java b/net/minecraft/world/entity/LivingEntity.java
-index a9eca4018a31dddeae4da85088097eb49e45ca06..3f554b998df6811f81e6825f274775765e9aab42 100644
+index d7bcd3d8d8d0803fa8bf7ead6941ec14331a7e82..6988c581abcfc7c4915dce0411dca3f508667b99 100644
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -576,10 +576,9 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
+@@ -580,10 +580,9 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
      }
  
      protected void tryAddFrost() {
@@ -36,7 +36,7 @@ index a9eca4018a31dddeae4da85088097eb49e45ca06..3f554b998df6811f81e6825f27477576
                  if (speed == null) {
                      return;
                  }
-@@ -587,7 +586,6 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
+@@ -591,7 +590,6 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
                  float slowAmount = -0.05F * this.getPercentFrozen();
                  speed.addTransientModifier(new AttributeModifier(SPEED_MODIFIER_POWDER_SNOW_ID, slowAmount, AttributeModifier.Operation.ADD_VALUE));
              }
