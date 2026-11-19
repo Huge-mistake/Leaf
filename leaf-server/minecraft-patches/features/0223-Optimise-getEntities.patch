@@ -85,10 +85,10 @@ index d825882a78f629e4789b4efdda946bd3ff8acfe6..81e72a1cd2de1bfeb4c78999148dd2e9
                      }
  
 diff --git a/net/minecraft/world/entity/LivingEntity.java b/net/minecraft/world/entity/LivingEntity.java
-index 02ac99cefb6a7526e848cd3015d0d400b0e747f5..89c6f193a5732255e136b1ee2b2d479b5803c034 100644
+index 7867b4a1b62dfed7be49b14824f8704ad5c2a440..ab7f35d36fa97e61c17d2585b95adc18eca1e559 100644
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -2290,7 +2290,7 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
+@@ -2294,7 +2294,7 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
  
      @Override
      public boolean isAlive() {

@@ -351,7 +351,7 @@ index 1aa888376784dfc9ddd9c4e2493031ff2a564b59..222268f81d96712cc14355135e70456d
 +    // Leaf end - Lithium - equipment tracking
  }
 diff --git a/net/minecraft/world/entity/LivingEntity.java b/net/minecraft/world/entity/LivingEntity.java
-index 89c6f193a5732255e136b1ee2b2d479b5803c034..48dd18bbf0b014aed394a10a18e9771c105ddd16 100644
+index ab7f35d36fa97e61c17d2585b95adc18eca1e559..070e426bb91b03012782ad8b5bbe0b6ba7d8df95 100644
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
 @@ -154,7 +154,7 @@ import org.bukkit.event.entity.EntityRegainHealthEvent;
@@ -372,7 +372,7 @@ index 89c6f193a5732255e136b1ee2b2d479b5803c034..48dd18bbf0b014aed394a10a18e9771c
              EnchantmentHelper.tickEffects(serverLevel, this);
          }
  
-@@ -3670,6 +3670,7 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
+@@ -3674,6 +3674,7 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
      public void detectEquipmentUpdates() {
          Map<EquipmentSlot, ItemStack> changedItems = this.collectEquipmentChanges(this.lastEquipmentItems);
          if (changedItems != null) {
@@ -380,7 +380,7 @@ index 89c6f193a5732255e136b1ee2b2d479b5803c034..48dd18bbf0b014aed394a10a18e9771c
              this.handleHandSwap(changedItems);
              if (!changedItems.isEmpty()) {
                  this.handleEquipmentChanges(changedItems);
-@@ -3678,6 +3679,10 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
+@@ -3682,6 +3683,10 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
      }
  
      protected @Nullable Map<EquipmentSlot, ItemStack> collectEquipmentChanges(final Map<EquipmentSlot, ItemStack> lastEquipmentItems) {
@@ -391,7 +391,7 @@ index 89c6f193a5732255e136b1ee2b2d479b5803c034..48dd18bbf0b014aed394a10a18e9771c
          Map<EquipmentSlot, ItemStack> changedItems = null;
          // Paper start - EntityEquipmentChangedEvent
          record EquipmentChangeImpl(org.bukkit.inventory.ItemStack oldItem, org.bukkit.inventory.ItemStack newItem) implements io.papermc.paper.event.entity.EntityEquipmentChangedEvent.EquipmentChange {
-@@ -5243,4 +5248,16 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
+@@ -5247,4 +5252,16 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
              return this.currentSwing != null;
          }
      }

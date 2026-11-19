@@ -28,22 +28,33 @@ but is so much cheaper than the suffocation check that it's worth
 keeping it.
 
 diff --git a/net/minecraft/world/entity/LivingEntity.java b/net/minecraft/world/entity/LivingEntity.java
-index 79e20a4bff07957af4263e6e1f08a21890d5f9b5..c77848d8df40935a810443c99c5209ae8963a58d 100644
+index 45b0a42a8ddd23faf95d059fcb3559461c867136..fe5b0644c11a844f3de50bc279f661dfbfd90d76 100644
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -461,7 +461,10 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
+@@ -461,7 +461,9 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
          profiler.push("livingEntityBaseTick");
          if (this.isAlive() && this.level() instanceof ServerLevel level) {
              boolean isPlayer = this instanceof Player;
 -            if (this.isInWall()) {
 +            // Gale start - Pufferfish - reduce in wall checks
-+            long checkStuckInWallInterval = this.level().galeConfig().smallOptimizations.reducedIntervals.checkStuckInWall;
-+            if ((checkStuckInWallInterval <= 1 || (tickCount % checkStuckInWallInterval == 0 && couldPossiblyBeHurt(1.0F))) && this.isInWall()) {
++            if (this.shouldCheckStuckInWallInterval() && this.isInWall()) {
 +                // Gale end - Pufferfish - reduce in wall checks
                  this.hurtServer(level, this.damageSources().inWall(), 1.0F);
              } else if (isPlayer && !level.getWorldBorder().isWithinBounds(this.getBoundingBox())) {
                  double dist = level.getWorldBorder().getDistanceToBorder(this) + level.getWorldBorder().getSafeZone();
-@@ -1452,6 +1455,12 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
+@@ -546,6 +548,11 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
+         profiler.pop();
+     }
+ 
++    public boolean shouldCheckStuckInWallInterval() {
++        long checkStuckInWallInterval = this.level().galeConfig().smallOptimizations.reducedIntervals.checkStuckInWall;
++        return checkStuckInWallInterval <= 1 || (tickCount % checkStuckInWallInterval == 0 && couldPossiblyBeHurt(1.0F));
++    }
++
+     protected boolean shouldTakeDrowningDamage() {
+         return this.getAirSupply() <= -this.level().purpurConfig.drowningDamageInterval; // Purpur - Drowning Settings
+     }
+@@ -1452,6 +1459,12 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
          return this.hurtTime > 0;
      }
  
@@ -56,3 +67,19 @@ index 79e20a4bff07957af4263e6e1f08a21890d5f9b5..c77848d8df40935a810443c99c5209ae
      @Override
      public boolean hurtServer(final ServerLevel level, final DamageSource source, float damage) {
          if (this.isInvulnerableTo(level, source)) {
+diff --git a/net/minecraft/world/entity/boss/wither/WitherBoss.java b/net/minecraft/world/entity/boss/wither/WitherBoss.java
+index 24d7b1ba448ba26f9631643014f3ed45098366c6..c1445fe546d4458a179e93dcc3e153b78d1cb423 100644
+--- a/net/minecraft/world/entity/boss/wither/WitherBoss.java
++++ b/net/minecraft/world/entity/boss/wither/WitherBoss.java
+@@ -288,6 +288,11 @@ public class WitherBoss extends Monster implements RangedAttackMob {
+         this.bossEvent.setName(this.getDisplayName());
+     }
+ 
++    @Override
++    public boolean shouldCheckStuckInWallInterval() {
++        return true;
++    }
++
+     @Override
+     public SoundEvent getAmbientSound() {
+         return SoundEvents.WITHER_AMBIENT;
