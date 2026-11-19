@@ -1,0 +1,18 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: CatTeaA <1615856447@qq.com>
+Date: Wed, 18 Nov 2026 23:51:13 +0800
+Subject: [PATCH] Count endermen holding blocks for spawning
+
+
+diff --git a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
+index 580c4f199b5a35837042f7d612658c06c55c7663..a1517002efd6ae907f36eea8684c6f05f2d1aaef 100644
+--- a/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
++++ b/src/main/java/io/papermc/paper/configuration/WorldConfiguration.java
+@@ -263,6 +263,7 @@ public class WorldConfiguration extends ConfigurationPart {
+             public DoubleOr.Default skeletonHorseThunderSpawnChance = DoubleOr.Default.USE_DEFAULT;
+             public boolean ironGolemsCanSpawnInAir = false;
+             public boolean countAllMobsForSpawning = false;
++            public boolean countEndermenHoldingBlocksForSpawning = false;
+             @BelowZeroToEmpty
+             public IntOr.Default monsterSpawnMaxLightLevel = IntOr.Default.USE_DEFAULT;
+             public DuplicateUUID duplicateUuid;

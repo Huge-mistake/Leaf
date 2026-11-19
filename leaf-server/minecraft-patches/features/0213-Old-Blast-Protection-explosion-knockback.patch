@@ -17,7 +17,7 @@ index 63a9956f4aaf6feb6de2ef59a2211448f816e4fb..e5d67c834f214def5b04e75cc3decbcb
      public static final StringRepresentable.EnumCodec<EquipmentSlot> CODEC = StringRepresentable.fromEnum(EquipmentSlot::values);
      public static final StreamCodec<ByteBuf, EquipmentSlot> STREAM_CODEC = ByteBufCodecs.idMapper(BY_ID, s -> s.id);
 diff --git a/net/minecraft/world/level/ServerExplosion.java b/net/minecraft/world/level/ServerExplosion.java
-index e649684b5fab7fdea0dd69d4d511d26c0a1d764c..41949cb4d0392844eb40b3d5bd3956da75b1cb5e 100644
+index 8aadfa97116ed5d76d4178ddaecd919fb8c23995..39aac15190c6b6a2125ac94390e2e951e84d9de6 100644
 --- a/net/minecraft/world/level/ServerExplosion.java
 +++ b/net/minecraft/world/level/ServerExplosion.java
 @@ -524,7 +524,7 @@ public class ServerExplosion implements Explosion {
@@ -28,8 +28,8 @@ index e649684b5fab7fdea0dd69d4d511d26c0a1d764c..41949cb4d0392844eb40b3d5bd3956da
 +                        double knockbackPower = entity instanceof Player && this.level.paperConfig().environment.disableExplosionKnockback ? 0 : getExplosionKnockback(entity, (1.0 - dist) * exposure * knockbackMultiplier, knockbackResistance); // Paper // Leaf - Old Blast Protection explosion knockback
                          Vec3 knockback = direction.scale(knockbackPower);
                          // CraftBukkit start - Call EntityKnockbackEvent
-                         if (entity instanceof LivingEntity livingEntity) {
-@@ -548,6 +548,52 @@ public class ServerExplosion implements Explosion {
+                         // Paper start - knockback events
+@@ -546,6 +546,52 @@ public class ServerExplosion implements Explosion {
          }
      }
  

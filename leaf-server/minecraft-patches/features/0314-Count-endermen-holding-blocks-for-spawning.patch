@@ -1,0 +1,36 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: CatTeaA <1615856447@qq.com>
+Date: Wed, 18 Nov 2026 23:45:12 +0800
+Subject: [PATCH] Count endermen holding blocks for spawning
+
+
+diff --git a/net/minecraft/world/level/NaturalSpawner.java b/net/minecraft/world/level/NaturalSpawner.java
+index f9c12fbb316a190880f5ed4b5531243b0e956368..b3f5e03d0622a2de8fceb05df5998f6b98d793e9 100644
+--- a/net/minecraft/world/level/NaturalSpawner.java
++++ b/net/minecraft/world/level/NaturalSpawner.java
+@@ -34,6 +34,7 @@ import net.minecraft.world.entity.Mob;
+ import net.minecraft.world.entity.MobCategory;
+ import net.minecraft.world.entity.SpawnGroupData;
+ import net.minecraft.world.entity.SpawnPlacements;
++import net.minecraft.world.entity.monster.Enderman;
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.level.biome.Biome;
+ import net.minecraft.world.level.biome.MobSpawnSettings;
+@@ -86,7 +87,7 @@ public final class NaturalSpawner {
+         Object2IntOpenHashMap<MobCategory> mobCounts = new Object2IntOpenHashMap<>();
+ 
+         for (Entity entity : entities) {
+-            if (!(entity instanceof Mob mob && (mob.isPersistenceRequired() || mob.requiresCustomPersistence()))) {
++            if (!(entity instanceof Mob mob && (mob.isPersistenceRequired() || mob.requiresCustomPersistence()) && !(entity.level().paperConfig().entities.spawning.countEndermenHoldingBlocksForSpawning && mob instanceof Enderman enderMan && enderMan.getCarriedBlock() != null))) { // Paper - Count endermen holding blocks for spawning
+                 MobCategory category = entity.getType().getCategory();
+                 if (category != MobCategory.MISC) {
+                     // Paper start - Only count natural spawns
+@@ -130,7 +131,7 @@ public final class NaturalSpawner {
+         Object2IntOpenHashMap<MobCategory> mobCounts = new Object2IntOpenHashMap<>();
+         it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<int[]> chunkCap = new it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<>();
+         for (Entity entity : entities) {
+-            if (entity instanceof Mob mob && (mob.isPersistenceRequired() || mob.requiresCustomPersistence())) {
++            if (entity instanceof Mob mob && (mob.isPersistenceRequired() || mob.requiresCustomPersistence()) && !(entity.level().paperConfig().entities.spawning.countEndermenHoldingBlocksForSpawning && mob instanceof Enderman enderMan && enderMan.getCarriedBlock() != null)) { // Paper - Count endermen holding blocks for spawning
+                 continue;
+             }
+             MobCategory category = entity.getType().getCategory();
