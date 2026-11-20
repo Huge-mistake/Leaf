@@ -1,0 +1,27 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: CatTeaA <1615856447@qq.com>
+Date: Fri, 20 Nov 2026 08:27:13 +0800
+Subject: [PATCH] Allow explosion knockback events for all entities
+
+
+diff --git a/net/minecraft/world/level/ServerExplosion.java b/net/minecraft/world/level/ServerExplosion.java
+index 0d0ace1217f956401e938808253dfd33e24d366c..31bdf31df19d582e719b2958d1031e5531daef78 100644
+--- a/net/minecraft/world/level/ServerExplosion.java
++++ b/net/minecraft/world/level/ServerExplosion.java
+@@ -527,12 +527,10 @@ public class ServerExplosion implements Explosion {
+                         double knockbackPower = entity instanceof Player && this.level.paperConfig().environment.disableExplosionKnockback ? 0 : getExplosionKnockback(entity, (1.0 - dist) * exposure * knockbackMultiplier, knockbackResistance); // Paper // Leaf - Old Blast Protection explosion knockback
+                         Vec3 knockback = direction.scale(knockbackPower);
+                         // CraftBukkit start - Call EntityKnockbackEvent
+-                        if (entity instanceof LivingEntity livingEntity) {
+-                            // Paper start - knockback events
+-                            io.papermc.paper.event.entity.EntityKnockbackEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityKnockbackEvent(livingEntity.getBukkitEntity(), this.source, this.damageSource.getEntity() != null ? this.damageSource.getEntity() : this.source, io.papermc.paper.event.entity.EntityKnockbackEvent.Cause.EXPLOSION, knockbackPower, knockback);
+-                            knockback = event.isCancelled() ? Vec3.ZERO : org.bukkit.craftbukkit.util.CraftVector.toVec3(event.getKnockback());
+-                            // Paper end - knockback events
+-                        }
++                        // Paper start - knockback events
++                        io.papermc.paper.event.entity.EntityKnockbackEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityKnockbackEvent(entity.getBukkitEntity(), this.source, this.damageSource.getEntity() != null ? this.damageSource.getEntity() : this.source, io.papermc.paper.event.entity.EntityKnockbackEvent.Cause.EXPLOSION, knockbackPower, knockback);
++                        knockback = event.isCancelled() ? Vec3.ZERO : org.bukkit.craftbukkit.util.CraftVector.toVec3(event.getKnockback());
++                        // Paper end - knockback events
+                         // CraftBukkit end
+                         entity.pushFromExplosion(knockback);
+                         if (entity.is(EntityTypeTags.REDIRECTABLE_PROJECTILE) && entity instanceof Projectile projectile) {
