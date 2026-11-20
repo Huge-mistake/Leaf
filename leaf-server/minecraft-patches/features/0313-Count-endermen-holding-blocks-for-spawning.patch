@@ -1,0 +1,19 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: CatTeaA <1615856447@qq.com>
+Date: Fri, 20 Nov 2026 08:01:55 +0800
+Subject: [PATCH] Count endermen holding blocks for spawning
+
+
+diff --git a/net/minecraft/world/level/NaturalSpawner.java b/net/minecraft/world/level/NaturalSpawner.java
+index d445aa61ce3173cf7cbc18dd42297663bddb805c..b3f5e03d0622a2de8fceb05df5998f6b98d793e9 100644
+--- a/net/minecraft/world/level/NaturalSpawner.java
++++ b/net/minecraft/world/level/NaturalSpawner.java
+@@ -87,7 +87,7 @@ public final class NaturalSpawner {
+         Object2IntOpenHashMap<MobCategory> mobCounts = new Object2IntOpenHashMap<>();
+ 
+         for (Entity entity : entities) {
+-            if (!(entity instanceof Mob mob && (mob.isPersistenceRequired() || mob.requiresCustomPersistence()))) {
++            if (!(entity instanceof Mob mob && (mob.isPersistenceRequired() || mob.requiresCustomPersistence()) && !(entity.level().paperConfig().entities.spawning.countEndermenHoldingBlocksForSpawning && mob instanceof Enderman enderMan && enderMan.getCarriedBlock() != null))) { // Paper - Count endermen holding blocks for spawning
+                 MobCategory category = entity.getType().getCategory();
+                 if (category != MobCategory.MISC) {
+                     // Paper start - Only count natural spawns

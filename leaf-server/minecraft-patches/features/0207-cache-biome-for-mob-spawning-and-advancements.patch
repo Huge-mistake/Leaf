@@ -35,10 +35,10 @@ index ad225fe3eccf6d649566c47f8d6fd162fe92d6f5..72bdeb11e961a65432c1d15f6679eaa3
          int x0 = Mth.floor(box.minX);
          int x1 = Mth.floor(box.maxX);
 diff --git a/net/minecraft/world/level/NaturalSpawner.java b/net/minecraft/world/level/NaturalSpawner.java
-index 4921da56d07b543c4651bb668eb8f643c82bfebb..d3059582f18c8d1b1d518bdab05ea1d414c9deea 100644
+index 14cf89b621031aed658eaf8ca8c3de2b2a142c35..031387db8e68abe6a9d9ef635bb6095233d226bd 100644
 --- a/net/minecraft/world/level/NaturalSpawner.java
 +++ b/net/minecraft/world/level/NaturalSpawner.java
-@@ -545,7 +545,7 @@ public final class NaturalSpawner {
+@@ -546,7 +546,7 @@ public final class NaturalSpawner {
          final RandomSource random,
          final BlockPos pos
      ) {

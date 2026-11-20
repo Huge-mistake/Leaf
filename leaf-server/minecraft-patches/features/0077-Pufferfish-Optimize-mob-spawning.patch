@@ -26,7 +26,7 @@ and, in my opinion, worth the low risk of minor mob-spawning-related
 inconsistencies.
 
 diff --git a/net/minecraft/server/MinecraftServer.java b/net/minecraft/server/MinecraftServer.java
-index e3ec478c00bf629afc788776d4db58f2d6940222..186a9a9f8de7add64e4945531516b3d3e905b20b 100644
+index 47279f68e6567aa05f187c36078ebb5c2bff1f3b..0c99d702347f3b82cfe86b1932633c3ff239bdb4 100644
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
 @@ -335,6 +335,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
@@ -259,10 +259,18 @@ index b4a076292c17a9216764db4e0074315eca3127aa..7d4707bea911e6cd2f9e7fd35204435a
          this.attributeSamplers.values().forEach(EnvironmentAttributeSystem.ValueSampler::invalidateTickCache);
      }
 diff --git a/net/minecraft/world/level/NaturalSpawner.java b/net/minecraft/world/level/NaturalSpawner.java
-index 3da6333683790ce17d9de34955dbf3f9e23a18ad..15c1bddff242e208c291f3bbbc01083ba333a98c 100644
+index 3da6333683790ce17d9de34955dbf3f9e23a18ad..ca5628aeb604eab3a4b8455ed9a3dc1f782e46b8 100644
 --- a/net/minecraft/world/level/NaturalSpawner.java
 +++ b/net/minecraft/world/level/NaturalSpawner.java
-@@ -121,6 +121,61 @@ public final class NaturalSpawner {
+@@ -34,6 +34,7 @@ import net.minecraft.world.entity.Mob;
+ import net.minecraft.world.entity.MobCategory;
+ import net.minecraft.world.entity.SpawnGroupData;
+ import net.minecraft.world.entity.SpawnPlacements;
++import net.minecraft.world.entity.monster.Enderman;
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.level.biome.Biome;
+ import net.minecraft.world.level.biome.MobSpawnSettings;
+@@ -121,6 +122,61 @@ public final class NaturalSpawner {
          return new NaturalSpawner.SpawnState(spawnableChunkCount, mobCounts, spawnPotential, localMobCapCalculator);
      }
  
@@ -274,7 +282,7 @@ index 3da6333683790ce17d9de34955dbf3f9e23a18ad..15c1bddff242e208c291f3bbbc01083b
 +        Object2IntOpenHashMap<MobCategory> mobCounts = new Object2IntOpenHashMap<>();
 +        it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<int[]> chunkCap = new it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<>();
 +        for (Entity entity : entities) {
-+            if (entity instanceof Mob mob && (mob.isPersistenceRequired() || mob.requiresCustomPersistence())) {
++            if (entity instanceof Mob mob && (mob.isPersistenceRequired() || mob.requiresCustomPersistence()) && !(entity.level().paperConfig().entities.spawning.countEndermenHoldingBlocksForSpawning && mob instanceof Enderman enderMan && enderMan.getCarriedBlock() != null)) { // Paper - Count endermen holding blocks for spawning
 +                continue;
 +            }
 +            MobCategory category = entity.getType().getCategory();
@@ -324,7 +332,7 @@ index 3da6333683790ce17d9de34955dbf3f9e23a18ad..15c1bddff242e208c291f3bbbc01083b
      public static List<MobCategory> getFilteredSpawningCategories(
          final NaturalSpawner.SpawnState state, final boolean spawnFriendlies, final boolean spawnEnemies, final boolean spawnPersistent, final ServerLevel level // CraftBukkit - add level/spawnFriendlies
      ) {
-@@ -617,6 +672,7 @@ public final class NaturalSpawner {
+@@ -617,6 +673,7 @@ public final class NaturalSpawner {
          private @Nullable BlockPos lastCheckedPos;
          private @Nullable EntityType<?> lastCheckedType;
          private double lastCharge;
@@ -332,7 +340,7 @@ index 3da6333683790ce17d9de34955dbf3f9e23a18ad..15c1bddff242e208c291f3bbbc01083b
  
          private SpawnState(
              final int spawnableChunkCount,
-@@ -624,6 +680,17 @@ public final class NaturalSpawner {
+@@ -624,6 +681,17 @@ public final class NaturalSpawner {
              final PotentialCalculator spawnPotential,
              final LocalMobCapCalculator localMobCapCalculator
          ) {
@@ -350,7 +358,7 @@ index 3da6333683790ce17d9de34955dbf3f9e23a18ad..15c1bddff242e208c291f3bbbc01083b
              this.spawnableChunkCount = spawnableChunkCount;
              this.mobCategoryCounts = mobCategoryCounts;
              this.spawnPotential = spawnPotential;
-@@ -677,6 +744,31 @@ public final class NaturalSpawner {
+@@ -677,6 +745,31 @@ public final class NaturalSpawner {
              return this.unmodifiableMobCategoryCounts;
          }
  
