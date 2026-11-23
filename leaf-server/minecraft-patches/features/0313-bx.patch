@@ -1,0 +1,95 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: CatTeaA <1615856447@qq.com>
+Date: Mon, 23 Nov 2026 14:37:12 +0800
+Subject: [PATCH] bx
+
+
+diff --git a/net/minecraft/world/entity/LivingEntity.java b/net/minecraft/world/entity/LivingEntity.java
+index c03e6b52ea3d5fdee344bed8acb5614408bb61aa..e2a28597b7073ee7889e45d4940eac1f99af34cd 100644
+--- a/net/minecraft/world/entity/LivingEntity.java
++++ b/net/minecraft/world/entity/LivingEntity.java
+@@ -465,10 +465,7 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
+         profiler.push("livingEntityBaseTick");
+         if (this.isAlive() && this.level() instanceof ServerLevel level) {
+             boolean isPlayer = this instanceof Player;
+-            // Gale start - Pufferfish - reduce in wall checks
+-            long checkStuckInWallInterval = this.level().galeConfig().smallOptimizations.reducedIntervals.checkStuckInWall;
+-            if ((checkStuckInWallInterval <= 1 || (tickCount % checkStuckInWallInterval == 0 && couldPossiblyBeHurt(1.0F))) && this.isInWall()) {
+-                // Gale end - Pufferfish - reduce in wall checks
++            if (this.shouldCheckStuckInWallInterval() && this.isInWall()) { // Gale - Pufferfish - reduce in wall checks
+                 this.hurtServer(level, this.damageSources().inWall(), 1.0F);
+             } else if (isPlayer && !level.getWorldBorder().isWithinBounds(this.getBoundingBox())) {
+                 double dist = level.getWorldBorder().getDistanceToBorder(this) + level.getWorldBorder().getSafeZone();
+@@ -553,6 +550,13 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
+         profiler.pop();
+     }
+ 
++    // Gale start - Pufferfish - reduce in wall checks
++    public boolean shouldCheckStuckInWallInterval() {
++        long checkStuckInWallInterval = this.level().galeConfig().smallOptimizations.reducedIntervals.checkStuckInWall;
++        return checkStuckInWallInterval <= 1 || (tickCount % checkStuckInWallInterval == 0 && couldPossiblyBeHurt(1.0F));
++    }
++    // Gale end - Pufferfish - reduce in wall checks
++
+     protected boolean shouldTakeDrowningDamage() {
+         return this.getAirSupply() <= -this.level().purpurConfig.drowningDamageInterval; // Purpur - Drowning Settings
+     }
+diff --git a/net/minecraft/world/entity/boss/wither/WitherBoss.java b/net/minecraft/world/entity/boss/wither/WitherBoss.java
+index 24d7b1ba448ba26f9631643014f3ed45098366c6..2edf0408cda8ebc6099562fc7de9bdcac11bee32 100644
+--- a/net/minecraft/world/entity/boss/wither/WitherBoss.java
++++ b/net/minecraft/world/entity/boss/wither/WitherBoss.java
+@@ -775,4 +775,11 @@ public class WitherBoss extends Monster implements RangedAttackMob {
+             return WitherBoss.this.getInvulnerableTicks() > 0;
+         }
+     }
++
++    // Gale start - Pufferfish - reduce in wall checks
++    @Override
++    public boolean shouldCheckStuckInWallInterval() {
++        return true;
++    }
++    // Gale end - Pufferfish - reduce in wall checks
+ }
+diff --git a/net/minecraft/world/level/NaturalSpawner.java b/net/minecraft/world/level/NaturalSpawner.java
+index f9c12fbb316a190880f5ed4b5531243b0e956368..21e86b90e91eb29613bf03935aaf7087480f2fd7 100644
+--- a/net/minecraft/world/level/NaturalSpawner.java
++++ b/net/minecraft/world/level/NaturalSpawner.java
+@@ -86,7 +86,7 @@ public final class NaturalSpawner {
+         Object2IntOpenHashMap<MobCategory> mobCounts = new Object2IntOpenHashMap<>();
+ 
+         for (Entity entity : entities) {
+-            if (!(entity instanceof Mob mob && (mob.isPersistenceRequired() || mob.requiresCustomPersistence()))) {
++            if (!(entity instanceof Mob mob && (mob.isPersistenceRequired() || mob.requiresCustomPersistence()) && !(entity.level().paperConfig().entities.spawning.countEndermenHoldingBlocksForSpawning && mob instanceof net.minecraft.world.entity.monster.Enderman enderMan && enderMan.getCarriedBlock() != null))) { // Paper - Count endermen holding blocks for spawning
+                 MobCategory category = entity.getType().getCategory();
+                 if (category != MobCategory.MISC) {
+                     // Paper start - Only count natural spawns
+@@ -130,7 +130,7 @@ public final class NaturalSpawner {
+         Object2IntOpenHashMap<MobCategory> mobCounts = new Object2IntOpenHashMap<>();
+         it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<int[]> chunkCap = new it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<>();
+         for (Entity entity : entities) {
+-            if (entity instanceof Mob mob && (mob.isPersistenceRequired() || mob.requiresCustomPersistence())) {
++            if (entity instanceof Mob mob && (mob.isPersistenceRequired() || mob.requiresCustomPersistence()) && !(entity.level().paperConfig().entities.spawning.countEndermenHoldingBlocksForSpawning && mob instanceof net.minecraft.world.entity.monster.Enderman enderMan && enderMan.getCarriedBlock() != null)) { // Paper - Count endermen holding blocks for spawning
+                 continue;
+             }
+             MobCategory category = entity.getType().getCategory();
+diff --git a/net/minecraft/world/level/ServerExplosion.java b/net/minecraft/world/level/ServerExplosion.java
+index 0d0ace1217f956401e938808253dfd33e24d366c..31bdf31df19d582e719b2958d1031e5531daef78 100644
+--- a/net/minecraft/world/level/ServerExplosion.java
++++ b/net/minecraft/world/level/ServerExplosion.java
+@@ -527,12 +527,10 @@ public class ServerExplosion implements Explosion {
+                         double knockbackPower = entity instanceof Player && this.level.paperConfig().environment.disableExplosionKnockback ? 0 : getExplosionKnockback(entity, (1.0 - dist) * exposure * knockbackMultiplier, knockbackResistance); // Paper // Leaf - Old Blast Protection explosion knockback
+                         Vec3 knockback = direction.scale(knockbackPower);
+                         // CraftBukkit start - Call EntityKnockbackEvent
+-                        if (entity instanceof LivingEntity livingEntity) {
+-                            // Paper start - knockback events
+-                            io.papermc.paper.event.entity.EntityKnockbackEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityKnockbackEvent(livingEntity.getBukkitEntity(), this.source, this.damageSource.getEntity() != null ? this.damageSource.getEntity() : this.source, io.papermc.paper.event.entity.EntityKnockbackEvent.Cause.EXPLOSION, knockbackPower, knockback);
+-                            knockback = event.isCancelled() ? Vec3.ZERO : org.bukkit.craftbukkit.util.CraftVector.toVec3(event.getKnockback());
+-                            // Paper end - knockback events
+-                        }
++                        // Paper start - knockback events
++                        io.papermc.paper.event.entity.EntityKnockbackEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityKnockbackEvent(entity.getBukkitEntity(), this.source, this.damageSource.getEntity() != null ? this.damageSource.getEntity() : this.source, io.papermc.paper.event.entity.EntityKnockbackEvent.Cause.EXPLOSION, knockbackPower, knockback);
++                        knockback = event.isCancelled() ? Vec3.ZERO : org.bukkit.craftbukkit.util.CraftVector.toVec3(event.getKnockback());
++                        // Paper end - knockback events
+                         // CraftBukkit end
+                         entity.pushFromExplosion(knockback);
+                         if (entity.is(EntityTypeTags.REDIRECTABLE_PROJECTILE) && entity instanceof Projectile projectile) {
